@@ -78,5 +78,5 @@ def mkentry(jtitle, title):
     ef.close()
     return new_object_path
 
-def journal_exists(jtitle):
+#def journal_exists(jtitle):
     
