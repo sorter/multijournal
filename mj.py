@@ -31,17 +31,26 @@ for arg in sys.argv:
 if args['help']:
     print "To create a journal: ../mj.py --title \"Fitness Tracking\"\n"+\
           "To create an entry: ../mj.py --jtitle \"Fitness Tracking\" --title "+\
-          "\"Ran For Ten Extra Minutes Today\"" 
+          "\"Ran For Ten Extra Minutes Today\"\n"+\
+          "Append the --open option to open the new entry or journal in a vim"+\
+          "buffer for editting"
 elif args['list']:
     if args['eid'] > 0:
         e = mjlib.get_entry(args['jtitle'], args['eid'])
         print e['title'] + "\n" + e['date'] + "\n" + e['body']
     elif args['jtitle'] != '':
-        for j in mjlib.list_entries(args['jtitle']):
-            print ' | '.join([j['eid'], j['title'], j['date']])
+        entries = mjlib.list_entries(args['jtitle'])
+        longest_title = max(map(lambda x: len(x['title']), entries))
+        for e in entries:
+            print ' | '.join([e['eid'], e['title']+\
+                " "*(longest_title-len(e['title'])), e['date']])
     else:
-        for j in mjlib.list_journals():
-            print ' | '.join([str(j['count']), j['title'], j['last_entry']])
+        journals = mjlib.list_journals()
+        # bit of string formatting
+        longest_title = max(map(lambda x: len(x['title']), journals))
+        for j in journals:
+            print ' | '.join([str(j['count']), j['title']+\
+                    " "*(longest_title-len(j['title'])), j['last_entry']])
 
 elif args['title'] == '' and args['jtitle'] == '':
     # print usage if no title or journal title given
@@ -61,6 +70,8 @@ else:
         sys.exit(2)
     else:
         new_object_path = mjlib.mkentry(args['jtitle'], args['title'])
+
+print new_object_path
 
 if args['open']:
     subprocess.call(['vim', new_object_path])

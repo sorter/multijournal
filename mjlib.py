@@ -3,7 +3,7 @@
 # helper functions for multijournal
 #
 
-import os
+import os, datetime
 
 USERNAME = 'askhader'
 LOCALDIR = '/scratch/mj/'
@@ -28,7 +28,8 @@ def list_entries(jtitle):
 def get_entry_count(jtitle):
     """Return an integer representing the number of entries in a journal"""
     try:
-        return max([int(j) for j in os.listdir(JSPATH+jtitle) if j.isdigit()])
+        return max([int(j) for j in os.listdir(JSPATH+jtitle.lower()) if\
+            j.isdigit()])
     except ValueError:
         return 0
 
@@ -60,7 +61,7 @@ def mkjournal(jtitle):
     """Create a journal with the given title. Return a path to the manifest"""
     tstr = jtitle + "\n" + str(datetime.datetime.now()) + "\n####\n"
     os.mkdir(JSPATH+jtitle.replace(' ', '_').lower())
-    new_object_path = JSPATH + jtitle + '/manifest'
+    new_object_path = JSPATH + jtitle.lower() + '/manifest'
     jmf = open(new_object_path, 'w')
     jmf.write(tstr)
     jmf.close()
@@ -70,9 +71,8 @@ def mkjournal(jtitle):
 def mkentry(jtitle, title):
     """Create a new journal entry with given title. Return path to the entry"""
     tstr = title + "\n" + str(datetime.datetime.now()) + "\n####\n"
-    files = os.listdir(journals_dir+args['jtitle'])
     count = get_entry_count(jtitle)
-    new_object_path = journals_dir+args['jtitle']+"/"+str(count+1)
+    new_object_path = JSPATH + jtitle.lower() + "/" + str(count+1)
     ef = open(new_object_path, 'w')
     ef.write(tstr)
     ef.close()
