@@ -36,7 +36,7 @@ if args['help']:
           "buffer for editting"
 elif args['list']:
     if args['eid'] > 0:
-        e = mjlib.get_entry(args['jtitle'], args['eid'])
+        e = mjlib.get_entry(args['jtitle'].replace(" ", "_").lower(), args['eid'])
         print e['title'] + "\n" + e['date'] + "\n" + e['body']
     elif args['jtitle'] != '':
         entries = mjlib.list_entries(args['jtitle'])

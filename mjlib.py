@@ -54,14 +54,17 @@ def list_journals():
         else:
             date = ''
         js.append({'title': j, 'count': c, 'last_entry': date})
-    return js            
+    js = sorted(js, key=lambda x: x['last_entry']) 
+    js.reverse()
+    return js
 
 
 def mkjournal(jtitle):
     """Create a journal with the given title. Return a path to the manifest"""
     tstr = jtitle + "\n" + str(datetime.datetime.now()) + "\n####\n"
-    os.mkdir(JSPATH+jtitle.replace(' ', '_').lower())
-    new_object_path = JSPATH + jtitle.lower() + '/manifest'
+    stripped_path = JSPATH+jtitle.replace(' ', '_').lower()
+    os.mkdir(stripped_path)
+    new_object_path = stripped_path + '/manifest'
     jmf = open(new_object_path, 'w')
     jmf.write(tstr)
     jmf.close()
@@ -72,7 +75,8 @@ def mkentry(jtitle, title):
     """Create a new journal entry with given title. Return path to the entry"""
     tstr = title + "\n" + str(datetime.datetime.now()) + "\n####\n"
     count = get_entry_count(jtitle)
-    new_object_path = JSPATH + jtitle.lower() + "/" + str(count+1)
+    stripped_title = jtitle.replace(' ', '_').lower()
+    new_object_path = JSPATH + stripped_title + "/" + str(count+1)
     ef = open(new_object_path, 'w')
     ef.write(tstr)
     ef.close()
