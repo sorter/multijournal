@@ -7,7 +7,7 @@ import sys, datetime, os, subprocess, mjlib
 # args that take no parms have a value of NONE so they are skipped
 # by the arg parser
 args = { 'title': '', 'jtitle': '', 'list': False, 'open': False, 
-         'eid': 0, 'help': False }
+         'eid': 0, 'help': False, 'ujtitle': '' }
 acceptable_args = args.keys()
 next_arg = ''
 journals_dir = '/home/askhader/scratch/mj/js/'
@@ -25,8 +25,12 @@ for arg in sys.argv:
         if next_arg == 'type':
             args[next_arg] = arg.lower()
         else:
+            if next_arg == 'jtitle':
+                args['ujtitle'] = arg
+                arg = arg.replace(" ", "_").lower()
             args[next_arg] = arg
         next_arg = ''
+
 
 if args['help']:
     print "To create a journal: ../mj.py --title \"Fitness Tracking\"\n"+\
@@ -36,7 +40,7 @@ if args['help']:
           "buffer for editting"
 elif args['list']:
     if args['eid'] > 0:
-        e = mjlib.get_entry(args['jtitle'].replace(" ", "_").lower(), args['eid'])
+        e = mjlib.get_entry(args['jtitle'], args['eid'])
         print e['title'] + "\n" + e['date'] + "\n" + e['body']
     elif args['jtitle'] != '':
         entries = mjlib.list_entries(args['jtitle'])
@@ -64,9 +68,8 @@ elif args['jtitle'] == '':
         new_object_path = mjlib.mkjournal(args['title']) 
 
 else:
-    if args['jtitle'].lower() not in\
-        [jn.lower() for jn in os.listdir(journals_dir)]:
-        print "No journals entitled: " + args['jtitle']
+    if args['jtitle'] not in [jn for jn in os.listdir(journals_dir)]:
+        print "No journals entitled: " + args['ujtitle']
         sys.exit(2)
     else:
         new_object_path = mjlib.mkentry(args['jtitle'], args['title'])
